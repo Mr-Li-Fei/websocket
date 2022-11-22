@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websocket Chat</title>
+</head>
+<body>
+    <form onsubmit="return false;">
+       <h3> Websocket 聊天室</h3>
+       <textarea name="eleponseTest" id="eleponseTest" cols="30" rows="10"></textarea>
+       <br/>
+       <input type="text" name="message" style="width: 300px;" value="welcome to websocket chat">
+       <input type="button" value="send" onclick="send()">
+    </form>
+</body>
+<script>
+    //  设置一个变量，
+    var socket;
+    if(!window.WebSocket) {
+        window.WebSocket = window.MozWebSocket;
+    }
+    if(window.WebSocket) {
+        socket = new WebSocket('ws://localhost:8080/ws');
+        console.log(socket, 'see websocket 实例');
+        socket.onopen = function(ev) {
+            console.log(ev, 'see open')
+            var ele = document.getElementById('eleponseTest');
+            ele.value = '链接开启'
+        }
+        socket.onmessage = function(ev) {
+            console.log(ev, 'see, message')
+            var ele = document.getElementById('eleponseTest');
+            ele.value = ele.value + '\n' + ev.data;
+        };
+        socket.onclose = function(ev) {
+            console.log(ev, 'see close')
+            var ele = document.getElementById('eleponseTest');
+            ele.value = ele.value + '链接链接关闭'
+        }
+        socket.onerror = function(err) {
+            console.log(err, 'see error');
+        }
+    }
+    function send() {
+        console.log(document.forms[0].message.value, 1111);
+        if(!window.WebSocket) {
+            return;
+        }
+
+        if(socket.readyState = WebSocket.OPEN) {
+            socket.send(document.forms[0].message.value);
+        } else {
+            alert('链接没有开启');
+        }
+    }
+</script>
+</html>
